@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Template Ujian F4</title>
+
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Scheherazade+New&display=swap" rel="stylesheet">
+
+<!-- Library untuk download PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- Library SortableJS -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+</head>
+
+<body>
+
+<!-- SETTINGS -->
+<div class="settings">
+  <div class="settings-card">
+
+    <!-- BARIS 1 : Semester, Tahun, Fan, Kelas -->
+    <div class="settings-row row-top">
+      <label>
+        Semester
+        <select id="semesterSelect">
+          <option value="">--Pilih--</option>
+          <option value="I">SEMESTER I</option>
+          <option value="II">SEMESTER II</option>
+        </select>
+      </label>
+
+      <label>
+        Tahun Ajaran
+        <select id="tahunInput"></select>
+      </label>
+
+      <label>
+        Fan
+        <select id="fanInput">
+          <option value="">-- Pilih Fan --</option>
+          <option value="الصرف">الصرف</option>
+          <option value="النحو">النحو</option>
+          <option value="التوحيد">التوحيد</option>
+          <option value="الفقه">الفقه</option>
+          <option value="الأخلاق">الأخلاق</option>
+          <option value="الحديث">الحديث</option>
+          <option value="الإعلال">الإعلال</option>
+          <option value="التاريخ">التاريخ</option>
+          <option value="إعلال الصرف">إعلال الصرف</option>
+          <option value="الخط والإملاء">الخط والإملاء</option>
+          <option value="التجويد">التجويد</option>
+          <option value="الاعلال">الاعلال</option>
+          <option value="مصطلاح الحديث">مصطلاح الحديث</option>
+          <option value="علم التفسير">علم التفسير</option>
+          <option value="القواعد الفقهية">القواعد الفقهية</option>
+          <option value="اصول الفقه">اصول الفقه</option>
+          <option value="البلاغة">البلاغة</option>
+        </select>
+      </label>
+
+      <label>
+        Kelas
+        <select id="kelasSelect">
+          <option value="">--Pilih--</option>
+          <option value="SP (Sekolah Persiapan)">SP (Sekolah Persiapan)</option>
+          <option value="I (Satu)">1 (Satu)</option>
+          <option value="2 (Dua)">2 (Dua)</option>
+          <option value="3 (Tiga)">3 (Tiga)</option>
+          <option value="4 (Empat)">4 (Empat)</option>
+          <option value="I (Satu) Putri">1 (Satu) Putri</option>
+          <option value="2 (Dua) Putri">2 (Dua) Putri</option>
+          <option value="3 (Tiga) Putri">3 (Tiga) Putri</option>
+          <option value="4 (Empat) Putri">4 (Empat) Putri</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- BARIS 2 : Ukuran Font & Jarak -->
+    <div class="settings-row row-font">
+      <label>
+        Font Soal Latin (pt)
+        <input id="latinSize" type="number" value="14">
+      </label>
+
+      <label>
+        Font Soal Arab (pt)
+        <input id="arabSize" type="number" value="16">
+      </label>
+
+      <label>
+        Jarak Antar Soal (pt)
+        <input id="soalGap" type="number" value="12">
+      </label>
+    </div>
+
+    <!-- BARIS 3 : Input Soal Besar -->
+    <div class="settings-row row-soal">
+      <label class="soal-full">
+        Soal Baru
+        <textarea id="soalInput" placeholder="Masukkan soal baru"></textarea>
+      </label>
+    </div>
+
+    <!-- BARIS 4 : Tombol -->
+    <div class="settings-row row-action">
+      <button onclick="resetDefault()">Reset Default</button>
+      <button id="clearSoal">Hapus Soal</button>
+      <button id="dragSoal">Urutkan Soal</button>
+      <button id="downloadPdf" class="btn-download">Download PDF</button>
+      <button id="addSoal">Tambah Soal</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- PAPER -->
+<div class="paper">
+  <div class="header">
+    <img src="" class="logo-left" alt="Logo Kiri">
+    <img src="" class="logo-right" alt="Logo Kanan">
+
+    <h1>UJIAN AKHIR SEMESTER <span id="semesterKop"></span></h1>
+    <h2>MUHADHOROH “MANBAUS SHOLAH”</h2>
+    <h2>PONDOK PESANTREN DARUTTAUHID AL ALAWI</h2>
+    <h2 id="tahunKop"></h2>
+
+    <hr class="kop-line">
+    <hr class="kop-line-thin">
+  </div>
+
+  <table class="info-table">
+    <tr>
+      <td width="40%" class="info-middle">
+        <table class="inner-table">
+          <tr>
+            <td class="label">Fan</td>
+            <td class="colon">:</td>
+            <td class="value" id="fanValue" contenteditable></td>
+          </tr>
+          <tr>
+            <td class="label">Kelas</td>
+            <td class="colon">:</td>
+            <td class="value" id="kelasValue" contenteditable></td>
+          </tr>
+        </table>
+      </td>
+
+      <td width="40%" class="info-middle">
+        <table class="inner-table">
+          <tr>
+            <td class="label">Nama</td>
+            <td class="colon">:</td>
+            <td class="value dots" contenteditable></td>
+          </tr>
+          <tr>
+            <td class="label">No. Ujian</td>
+            <td class="colon">:</td>
+            <td class="value dots" contenteditable></td>
+          </tr>
+        </table>
+      </td>
+
+      <td width="20%" class="info-right">NILAI</td>
+    </tr>
+  </table>
+
+  <div class="instruction-wrap">
+    <div class="instruction">أجب هذه الأسئلة بأجوبة موافقة !</div>
+  </div>
+
+  <div class="questions"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modalTitle">
+  <div class="modal-content">
+    <h3>Ganti Judul / Nama File PDF</h3>
+    <input type="text" id="customTitle" placeholder="">
+    <div class="modal-actions">
+      <button id="modalCancel">Batal</button>
+      <button id="modalOk">OK</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script type="module">
+  import { ppdaLogo } from './ppda.js';
+  import { madinLogo } from './madin.js';
+
+  document.querySelector('.logo-left').src = ppdaLogo;
+  document.querySelector('.logo-right').src = madinLogo;
+</script>
+
+</body>
+</html>
